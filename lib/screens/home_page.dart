@@ -19,7 +19,7 @@ class HomePage extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(30),
         alignment: Alignment.topCenter,
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         child: const EventoContainer(),
       ),
     );
@@ -44,25 +44,40 @@ class EventoContainer extends StatelessWidget {
           color: Theme.of(context).colorScheme.primaryContainer,
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(255, 0, 0, 0)
-                  .withOpacity(0.4), // Color de la sombra
-              spreadRadius: 3, // Extensión de la sombra
-              blurRadius: 10, // Difuminado de la sombra
+              color: Colors.grey.shade400, // Color de la sombra
+              spreadRadius: 1, // Extensión de la sombra
+              blurRadius: 15, // Difuminado de la sombra
+              offset: const Offset(4.0, 4.0),
+            ),
+            const BoxShadow(
+              color: Colors.white70, // Color de la sombra
+              spreadRadius: 1, // Extensión de la sombra
+              blurRadius: 15, // Difuminado de la sombra
+              offset: Offset(-4.0, -4.0),
             ),
           ]),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          const Column(),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton.filled(
-                iconSize: 35,
-                onPressed: () {},
-                icon: Icon(MdiIcons.informationVariant),
-              )
+              Text('Evento:'),
+              Align(
+                child: Row(
+                  children: [
+                    Text('Fecha:'),
+                    Text('Me gustas: '),
+                  ],
+                ),
+              ),
             ],
+          ),
+          IconButton.filled(
+            iconSize: 30,
+            onPressed: () {},
+            icon: Icon(MdiIcons.informationVariant),
           )
         ],
       ),
