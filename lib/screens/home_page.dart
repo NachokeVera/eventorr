@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventor/service/firestore_service.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-
+import 'package:eventor/widgets/mis_widgets.dart';
+//import 'package:intl/intl.dart';
 //import 'package:eventor/firebase_options.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,6 +16,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        Navigator.pushNamed(context, "/formpage");
+      }),
       appBar: AppBar(
         centerTitle: true,
         title: Text('EVENTOR!',
@@ -24,69 +29,33 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Container(
-        padding: const EdgeInsets.all(30),
-        alignment: Alignment.topCenter,
-        color: Theme.of(context).colorScheme.surfaceVariant,
-      ),
-    );
-  }
-}
-
-class EventoContainer extends StatelessWidget {
-  final String title;
-  const EventoContainer({
-    super.key,
-    this.title = '',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 130,
-      width: double.infinity,
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
-          color: Theme.of(context).colorScheme.primaryContainer,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade400, // Color de la sombra
-              spreadRadius: 1, // Extensión de la sombra
-              blurRadius: 15, // Difuminado de la sombra
-              offset: const Offset(4.0, 4.0),
-            ),
-            const BoxShadow(
-              color: Colors.white70, // Color de la sombra
-              spreadRadius: 1, // Extensión de la sombra
-              blurRadius: 15, // Difuminado de la sombra
-              offset: Offset(-4.0, -4.0),
-            ),
-          ]),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          const Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Evento:'),
-              Align(
-                child: Row(
-                  children: [
-                    Text('Fecha:'),
-                    Text('Me gustas: '),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          IconButton.filled(
-            iconSize: 30,
-            onPressed: () {},
-            icon: Icon(MdiIcons.informationVariant),
-          )
-        ],
-      ),
+          padding: const EdgeInsets.all(30),
+          alignment: Alignment.topCenter,
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          child: StreamBuilder(
+              stream: FirestoreService().eventos(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (!snapshot.hasData ||
+                    snapshot.connectionState == ConnectionState.waiting) {
+                  //esperando datos
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      var evento = snapshot.data!.docs[index];
+                      var fechaHoraTimestamp = evento['fecha'] as Timestamp;
+                      var t = fechaHoraTimestamp.toDate();
+                      return EventoContainer(
+                          nombre: evento['nombre'],
+                          lugar: evento['lugar'],
+                          fecha: '${t.day}/${t.month}/${t.year}',
+                          hora: '${t.hour}:${t.minute}');
+                    },
+                  );
+                }
+              })),
     );
   }
 }
