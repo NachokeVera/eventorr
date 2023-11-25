@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         "/formpage": (context) => const FormEvento(),
         "/homepage": (context) => const HomePage(),
       },
-      home: const HomePage(),
+      home: login_page(),
     );
   }
 }
